@@ -62,13 +62,9 @@ plt.xticks(rotation=45)
 plt.tight_layout()
 plt.show()
 
-# Insight 2: Correlation between Packet Length and Severity Level
-severity_packet_corr = df_cleaned['Packet Length'].corr(df_cleaned['Severity Level'])
-print(f"\nInsight 2: Correlation between Packet Length and Severity Level: {severity_packet_corr:.2f}")
-
-# Insight 3: Most common geo-locations for attacks
+# Insight 2: Most common geo-locations for attacks
 geo_location_counts = df_cleaned['Geo-location Data'].value_counts().head(5)
-print("\nInsight 3: Top 5 Geo-Locations for Attacks:")
+print("\nInsight 2: Top 5 Geo-Locations for Attacks:")
 print(geo_location_counts)
 
 # Visualization for Top 5 Geo-Locations
@@ -81,13 +77,14 @@ plt.xticks(rotation=45)
 plt.tight_layout()
 plt.show()
 
-# Insight 4: Action taken for different attack types
+# Insight 3: Action taken for different attack types
 action_attack = df_cleaned.groupby('Attack Type')['Action Taken'].value_counts().unstack().fillna(0)
-print("\nInsight 4: Action Taken for Different Attack Types:")
+print("\nInsight 3: Action Taken for Different Attack Types:")
 print(action_attack)
 
 # Visualization for Action Taken for Different Attack Types
-action_attack.plot(kind='bar', stacked=True, figsize=(12, 6), colormap='viridis')
+plt.figure(figsize=(12, 6))
+action_attack.plot(kind='bar', stacked=True, colormap='viridis')
 plt.title('Action Taken for Different Attack Types')
 plt.xlabel('Attack Type')
 plt.ylabel('Number of Actions')
@@ -95,10 +92,37 @@ plt.xticks(rotation=45)
 plt.tight_layout()
 plt.show()
 
-# Insight 5: Anomaly Scores Distribution by Malware Indicators
+# Insight 4: Anomaly Scores Distribution by Malware Indicators
 plt.figure(figsize=(10, 6))
 sns.boxplot(x='Malware Indicators', y='Anomaly Scores', data=df_cleaned, palette='pastel')
 plt.title('Anomaly Scores Distribution by Malware Indicators')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+# Insight 5: Distribution of Firewall Logs and Log Source
+# Handle Missing Values
+df_cleaned = df.dropna(subset=['Firewall Logs', 'Log Source'])
+
+# Aggregate counts for Firewall Logs and Log Source
+firewall_log_counts = df_cleaned['Firewall Logs'].value_counts()
+log_source_counts = df_cleaned['Log Source'].value_counts()
+
+# Combine the counts into a DataFrame
+combined_df = pd.DataFrame({
+    'Firewall Logs': firewall_log_counts,
+    'Log Source': log_source_counts
+}).fillna(0)  # Fill NaN with 0 for categories not present in both columns
+
+# Plot the data
+plt.figure(figsize=(14, 7))
+
+# Plot Firewall Logs and Log Source as grouped bars
+combined_df.plot(kind='bar', figsize=(14, 7), colormap='viridis', ax=plt.gca())
+
+plt.title('Distribution of Firewall Logs and Log Source')
+plt.xlabel('Category')
+plt.ylabel('Count')
 plt.xticks(rotation=45)
 plt.tight_layout()
 plt.show()
